@@ -12,8 +12,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework import status
-from .models import Cart, CartItem, Customer, Product, Collection, OrderItem, Review
-from .serializers import AddCartItemSerializer, CartSerializer, CartItemSerializer, CustomerSerializer, ProductSerializer, CollectionSerializer, ReviewSerializer, UpdateCartItemSerializer
+from .models import Cart, CartItem, Customer, Product, Collection, Order, OrderItem, Review
+from .serializers import AddCartItemSerializer, CartSerializer, CartItemSerializer, CustomerSerializer, OrderSerializer, ProductSerializer, CollectionSerializer, ReviewSerializer, UpdateCartItemSerializer
 from .filters import ProductFilter
 from .pagination import DefaultPagination
 from .permissions import IsAdminOrReadOnly, FullDjangoModelPermissions, ViewCustomerHistoryPermission
@@ -186,3 +186,8 @@ class CustomerViewSet(ModelViewSet):
       serializer.is_valid(raise_exception=True)
       serializer.save()
       return Response(serializer.data)
+
+
+class OrderViewSet(ListModelMixin, GenericViewSet):
+  queryset = Order.objects.all()
+  serializer_class = OrderSerializer
