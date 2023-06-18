@@ -16,7 +16,7 @@ from .models import Cart, CartItem, Customer, Product, Collection, OrderItem, Re
 from .serializers import AddCartItemSerializer, CartSerializer, CartItemSerializer, CustomerSerializer, ProductSerializer, CollectionSerializer, ReviewSerializer, UpdateCartItemSerializer
 from .filters import ProductFilter
 from .pagination import DefaultPagination
-from .permissions import IsAdminOrReadOnly, FullDjangoModelPermissions
+from .permissions import IsAdminOrReadOnly, FullDjangoModelPermissions, ViewCustomerHistoryPermission
 
 
 # class ProductList(APIView):
@@ -170,6 +170,10 @@ class CustomerViewSet(ModelViewSet):
   #   if self.request.method == 'GET':
   #     return [AllowAny()]
   #   return [IsAuthenticated()]
+
+  @action(detail=True, permission_classes=[ViewCustomerHistoryPermission])
+  def history(self, request, pk):
+    return Response('ok')
 
   @action(detail=False, methods=['GET', 'PUT'], permission_classes=[IsAuthenticated])
   def me(self, request):
