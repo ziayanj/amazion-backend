@@ -198,7 +198,7 @@ class OrderViewSet(ListModelMixin, CreateModelMixin, GenericViewSet):
     serializer.is_valid(raise_exception=True)
     order = serializer.save()
     serializer = OrderSerializer(order)
-    return Response(serializer.data)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
   def get_serializer_class(self):
     if self.request.method == 'POST':
