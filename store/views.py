@@ -12,8 +12,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, GenericViewSet
 from rest_framework import status
-from .models import Cart, CartItem, Customer, Product, Collection, Order, OrderItem, Review
-from .serializers import AddCartItemSerializer, CartSerializer, CartItemSerializer, CreateOrderSerializer, CustomerSerializer, OrderSerializer, ProductSerializer, CollectionSerializer, ReviewSerializer, UpdateCartItemSerializer, UpdateOrderSerializer
+from .models import Cart, CartItem, Customer, Product, ProductImage, Collection, Order, OrderItem, Review
+from .serializers import AddCartItemSerializer, CartSerializer, CartItemSerializer, CreateOrderSerializer, CustomerSerializer, OrderSerializer, ProductSerializer, ProductImageSerializer, CollectionSerializer, ReviewSerializer, UpdateCartItemSerializer, UpdateOrderSerializer
 from .filters import ProductFilter
 from .pagination import DefaultPagination
 from .permissions import IsAdminOrReadOnly, FullDjangoModelPermissions, ViewCustomerHistoryPermission
@@ -220,3 +220,13 @@ class OrderViewSet(ModelViewSet):
 
     customer_id = Customer.objects.only('id').get(user_id=user.id)
     return Order.objects.filter(customer_id=customer_id).all()
+
+
+class ProductImageViewset(ModelViewSet):
+  serializer_class = ProductImageSerializer
+
+  def get_queryset(self):
+    return ProductImage.objects.filter(product_id=self.kwargs['product_pk'])
+  
+  def get_serializer_context(self):
+    return { 'product_id': self.kwargs['product_pk'] }
