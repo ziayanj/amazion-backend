@@ -5,6 +5,7 @@ from django.db.models.aggregates import Min, Sum, Max, Avg
 from django.db.models.functions import Concat, Cast
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction, connection
+from templated_mail.mail import BaseEmailMessage
 from store.models import Product, OrderItem, Order, Customer, Collection, Cart, CartItem
 from tags.models import TaggedItem
 
@@ -13,9 +14,16 @@ def say_hello(request):
     try:
         # send_mail('subject', 'message', 'from@amazion.com', ['to@amazion.com'])
         # mail_admins('subject', 'old message', html_message='<h1>message</h1>')
-        message = EmailMessage('subject', 'message', 'from@amazion.com', ['to@amazion.com'])
-        message.attach_file('playground/static/images/boon.png')
-        message.send()
+
+        # message = EmailMessage('subject', 'message', 'from@amazion.com', ['to@amazion.com'])
+        # message.attach_file('playground/static/images/boon.png')
+        # message.send()
+
+        message = BaseEmailMessage(
+            template_name='emails/hello.html',
+            context={'name': 'Test Name'}
+        )
+        message.send(['to@amazion.com'])
     except BadHeaderError:
         pass
     # ordered_products = OrderItem.objects.values_list('product_id').distinct()

@@ -1,0 +1,10 @@
+{% block subject %}This is a long subject{% endblock %}
+
+{% block text_body %}
+This block is optional. Will be used only if the user's email client doesn't support HTML emails.
+{% endblock %}
+
+{% block html_body %}
+<h1>Hello</h1>
+My name is {{ name }}
+{% endblock %}
