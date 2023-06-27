@@ -1,4 +1,4 @@
-from django.core.mail import send_mail, mail_admins, BadHeaderError
+from django.core.mail import send_mail, mail_admins, EmailMessage, BadHeaderError
 from django.shortcuts import render
 from django.db.models import Q, F, Func, Value, Count, ExpressionWrapper, DecimalField, IntegerField, FloatField, BooleanField
 from django.db.models.aggregates import Min, Sum, Max, Avg
@@ -12,7 +12,10 @@ from tags.models import TaggedItem
 def say_hello(request):
     try:
         # send_mail('subject', 'message', 'from@amazion.com', ['to@amazion.com'])
-        mail_admins('subject', 'old message', html_message='<h1>message</h1>')
+        # mail_admins('subject', 'old message', html_message='<h1>message</h1>')
+        message = EmailMessage('subject', 'message', 'from@amazion.com', ['to@amazion.com'])
+        message.attach_file('playground/static/images/boon.png')
+        message.send()
     except BadHeaderError:
         pass
     # ordered_products = OrderItem.objects.values_list('product_id').distinct()
