@@ -1,3 +1,4 @@
+from django.core.mail import send_mail, mail_admins, BadHeaderError
 from django.shortcuts import render
 from django.db.models import Q, F, Func, Value, Count, ExpressionWrapper, DecimalField, IntegerField, FloatField, BooleanField
 from django.db.models.aggregates import Min, Sum, Max, Avg
@@ -9,17 +10,22 @@ from tags.models import TaggedItem
 
 @transaction.atomic()
 def say_hello(request):
+    try:
+        # send_mail('subject', 'message', 'from@amazion.com', ['to@amazion.com'])
+        mail_admins('subject', 'old message', html_message='<h1>message</h1>')
+    except BadHeaderError:
+        pass
     # ordered_products = OrderItem.objects.values_list('product_id').distinct()
 
     # queryset = Product.objects.filter(id__in=ordered_products).order_by('title')
 
     # queryset = Product.objects.select_related('collection').prefetch_related('promotions').all()
     queryset = Collection.objects.annotate(
-        products_count=Count('product')
+        products_count=Count('products')
     )
 
-    for i in list(queryset):
-        print(i.products_count)
+    # for i in list(queryset):
+    #     print(i.products_count)
 
     # haha = Customer.objects.annotate(
     #     new_id=F('id'),

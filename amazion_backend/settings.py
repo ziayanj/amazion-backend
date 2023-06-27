@@ -185,3 +185,7 @@ EMAIL_USER = ''
 EMAIL_PASSWORD = ''
 EMAIL_PORT = 2525
 DEFAULT_FROM_EMAIL = 'support@amazion.com'
+
+ADMINS = [
+    ('Admin', 'admin@amazion.com'),
+]
