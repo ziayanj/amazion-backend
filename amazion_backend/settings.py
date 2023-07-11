@@ -189,3 +189,5 @@ DEFAULT_FROM_EMAIL = 'support@amazion.com'
 ADMINS = [
     ('Admin', 'admin@amazion.com'),
 ]
+
+CELERY_BROKER_URL = 'redis://localhost:6379/1'
