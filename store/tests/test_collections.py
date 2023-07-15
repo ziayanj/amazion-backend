@@ -69,6 +69,77 @@ class TestRetrieveCollection:
     }
 
   def test_if_collection_does_not_exist_returns_404(self, api_client):
-    response = api_client.get(f'/store/collections/-1/')
+    response = api_client.get('/store/collections/-1/')
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
+@pytest.mark.django_db
+class TestUpdateCollection:
+  def test_if_collection_updates_returns_200(self, api_client, authenticate):
+    collection = baker.make(Collection)
+    authenticate(is_staff=True)
+
+    response = api_client.patch(f'/store/collections/{collection.id}/', { 'title': 'a' })
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data['title'] == 'a'
+
+  def test_if_collection_does_not_exist_returns_404(self, api_client, authenticate):
+    authenticate(is_staff=True)
+
+    response = api_client.patch('/store/collections/-1/', { 'title': 'a' })
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+@pytest.mark.django_db
+class TestListCollection:
+  def test_if_collection_list_returns_200(self, api_client):
+    collection = baker.make(Collection)
+
+    response = api_client.get('/store/collections/')
+
+    assert response.status_code == status.HTTP_200_OK
+    assert any(obj == {
+      'id': collection.id,
+      'title': collection.title,
+      'products_count': 0
+    } for obj in response.data)
+
+  def test_if_no_collection_returns_200(self, api_client):
+    response = api_client.get('/store/collections/')
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data == []
+
+@pytest.mark.django_db
+class TestDestroyCollection:
+  def test_if_user_is_anonymmous_returns_401(self, api_client):
+    collection = baker.make(Collection)
+
+    response = api_client.delete(f'/store/collections/{collection.id}/')
+
+    assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+  def test_if_user_is_not_admin_returns_403(self, api_client, authenticate):
+    authenticate()
+    collection = baker.make(Collection)
+
+    response = api_client.delete(f'/store/collections/{collection.id}/')
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+  def test_if_collection_does_not_exist_returns_404(self, api_client, authenticate):
+    authenticate(is_staff=True)
+
+    response = api_client.delete('/store/collections/-1/')
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+  def test_if_collection_deleted_returns_204(self, api_client, authenticate):
+    authenticate(is_staff=True)
+    collection = baker.make(Collection)
+
+    response = api_client.delete(f'/store/collections/{collection.id}/')
+
+    assert response.status_code == status.HTTP_204_NO_CONTENT
