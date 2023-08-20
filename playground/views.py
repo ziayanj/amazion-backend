@@ -5,6 +5,7 @@ from django.db.models.aggregates import Min, Sum, Max, Avg
 from django.db.models.functions import Concat, Cast
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction, connection
+from django.core.cache import cache
 import requests
 from templated_mail.mail import BaseEmailMessage
 from store.models import Product, OrderItem, Order, Customer, Collection, Cart, CartItem
@@ -13,7 +14,14 @@ from .tasks import notify_customers
 
 @transaction.atomic()
 def say_hello(request):
-    requests.get('https://httpbin.org/delay/2')
+    key = 'httpbin_result'
+    if cache.get(key) is None:
+        response = requests.get('https://httpbin.org/delay/2')
+        data = response.json()
+        cache.set(key, data, 10 * 60)
+    
+    return render(request, 'hello.html', { 'name': cache.get(key) })
+
     # notify_customers.delay('Hello')
 
     # try:
@@ -142,4 +150,3 @@ def say_hello(request):
     # print(queryset[0]['unit_price'])
 
     # return render(request, 'hello.html', { 'name': 'Ziayan', 'tags': list(queryset) })
-    return render(request, 'hello.html', { 'name': 'Ziayan' })
