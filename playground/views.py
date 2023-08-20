@@ -5,6 +5,7 @@ from django.db.models.aggregates import Min, Sum, Max, Avg
 from django.db.models.functions import Concat, Cast
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction, connection
+import requests
 from templated_mail.mail import BaseEmailMessage
 from store.models import Product, OrderItem, Order, Customer, Collection, Cart, CartItem
 from tags.models import TaggedItem
@@ -12,7 +13,8 @@ from .tasks import notify_customers
 
 @transaction.atomic()
 def say_hello(request):
-    notify_customers.delay('Hello')
+    requests.get('https://httpbin.org/delay/2')
+    # notify_customers.delay('Hello')
 
     # try:
         # send_mail('subject', 'message', 'from@amazion.com', ['to@amazion.com'])
@@ -139,4 +141,5 @@ def say_hello(request):
     # print(queryset[0]['title'])
     # print(queryset[0]['unit_price'])
 
-    return render(request, 'hello.html', { 'name': 'Ziayan', 'tags': list(queryset) })
+    # return render(request, 'hello.html', { 'name': 'Ziayan', 'tags': list(queryset) })
+    return render(request, 'hello.html', { 'name': 'Ziayan' })
