@@ -6,21 +6,38 @@ from django.db.models.functions import Concat, Cast
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction, connection
 from django.core.cache import cache
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+from rest_framework.views import APIView
 import requests
 from templated_mail.mail import BaseEmailMessage
 from store.models import Product, OrderItem, Order, Customer, Collection, Cart, CartItem
 from tags.models import TaggedItem
 from .tasks import notify_customers
 
-@transaction.atomic()
-def say_hello(request):
-    key = 'httpbin_result'
-    if cache.get(key) is None:
+
+class HelloView(APIView):
+    @method_decorator(cache_page(5 * 60))
+    def get(self, request):
         response = requests.get('https://httpbin.org/delay/2')
         data = response.json()
-        cache.set(key, data, 10 * 60)
     
-    return render(request, 'hello.html', { 'name': cache.get(key) })
+        return render(request, 'hello.html', { 'name': data })    
+
+
+@cache_page(5 * 60)
+# @transaction.atomic()
+def say_hello(request):
+    # key = 'httpbin_result'
+    # if cache.get(key) is None:
+    #     response = requests.get('https://httpbin.org/delay/2')
+    #     data = response.json()
+    #     cache.set(key, data, 10 * 60)
+
+    response = requests.get('https://httpbin.org/delay/2')
+    data = response.json()
+    
+    return render(request, 'hello.html', { 'name': data })
 
     # notify_customers.delay('Hello')
 
