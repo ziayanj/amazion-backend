@@ -220,3 +220,32 @@ CACHES = {
         }
     }
 }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': 'general.log',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        # 'playground': {} # Logger for any messages sent from playground app
+        # 'playground.views': {} # Only capture log messages from views module
+        '': { # Capture all messages from all apps
+            'handlers': ['console', 'file'],
+            'level': os.environ.get('DJANGO_LOG_LEVEL', 'INFO') # Capture messages of given severity, or higher. (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+        },
+    },
+    'formatters': { # Optional
+        'verbose': {
+            'format': '{asctime} ({levelname}) - {name} - {message}',
+            'style': '{', # '{' = str.format(), '$' = str.Template
+        },
+    },
+}

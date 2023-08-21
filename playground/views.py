@@ -9,19 +9,27 @@ from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 from rest_framework.views import APIView
+import logging
 import requests
 from templated_mail.mail import BaseEmailMessage
 from store.models import Product, OrderItem, Order, Customer, Collection, Cart, CartItem
 from tags.models import TaggedItem
 from .tasks import notify_customers
 
+logger = logging.getLogger(__name__) # __name__ = views.playgruond
+
 
 class HelloView(APIView):
-    @method_decorator(cache_page(5 * 60))
+    # @method_decorator(cache_page(5 * 60))
     def get(self, request):
-        response = requests.get('https://httpbin.org/delay/2')
-        data = response.json()
-    
+        try:
+            logger.info('Calling httpbin')
+            response = requests.get('https://httpbin.org/delay/2')
+            logger.info('Received the response')
+            data = response.json()
+        except requests.ConnectionError:
+            logger.critical('httpbin is offline')
+
         return render(request, 'hello.html', { 'name': data })    
 
 
