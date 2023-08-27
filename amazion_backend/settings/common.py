@@ -171,7 +171,6 @@ ADMINS = [
     ('Admin', 'admin@amazion.com'),
 ]
 
-CELERY_BROKER_URL = 'redis://localhost:6379/1'
 CELERY_BEAT_SCHEDULE = {
     'notify_customers': {
         'task': 'playground.tasks.notify_customers',
@@ -181,17 +180,6 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': 2 * 60 * 60,
         'args': ['Hello World'],
         # 'kwargs': {}
-    }
-}
-
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/2",
-        "TIMEOUT": 10 * 60,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
     }
 }
 
