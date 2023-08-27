@@ -161,10 +161,6 @@ SIMPLE_JWT = {
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'localhost'
-EMAIL_USER = ''
-EMAIL_PASSWORD = ''
-EMAIL_PORT = 2525
 DEFAULT_FROM_EMAIL = 'support@amazion.com'
 
 ADMINS = [
